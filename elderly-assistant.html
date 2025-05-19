@@ -575,10 +575,9 @@
         <span id="dance-upload-filename" style="font-size:15px;color:#888;margin-left:8px;"></span>
         <div id="dance-list" style="margin:12px 0;"></div>
         <div style="margin-top:10px;font-size:18px;font-weight:bold;">留言区</div>
-        <form onsubmit="addDanceMsg(event)">
+        <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:8px;">
           <input id="dance-msg-input" type="text" placeholder="说点什么..." style="font-size:18px;width:70%;">
-          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">发送</button>
-        </form>
+        </div>
         <div id="dance-share-row" style="display:flex;gap:12px;margin-top:10px;justify-content:center;">
           <button onclick="shareTo('微信')" style="font-size:16px;padding:6px 18px;background:#09bb07;color:#fff;border:none;border-radius:8px;display:flex;align-items:center;gap:6px;">
             <i class="fa-brands fa-weixin"></i> 微信
@@ -1422,41 +1421,47 @@
     }
 
     function shareTo(type) {
+      // 获取留言内容
+      const msg = document.getElementById('dance-msg-input').value.trim();
+      let shareText = msg ? `留言：${msg}\n` : '';
       // 系统级分享（Web Share API）
       if (navigator.share) {
         let shareData = {
           title: '乐龄生活+广场舞圈',
-          text: '快来看看我的广场舞视频和留言吧！',
+          text: shareText + '快来看看我的广场舞视频和留言吧！',
           url: window.location.href
         };
-        if(type==='微信') shareData.text = '快来微信看看我的广场舞视频和留言吧！';
-        if(type==='钉钉') shareData.text = '快来钉钉看看我的广场舞视频和留言吧！';
-        if(type==='QQ') shareData.text = '快来QQ看看我的广场舞视频和留言吧！';
-        navigator.share(shareData).catch(()=>{
-          alert('系统分享已取消或失败');
+        if(type==='微信') shareData.text = shareText + '快来微信看看我的广场舞视频和留言吧！（微信分享）';
+        if(type==='钉钉') shareData.text = shareText + '快来钉钉看看我的广场舞视频和留言吧！（钉钉分享）';
+        if(type==='QQ') shareData.text = shareText + '快来QQ看看我的广场舞视频和留言吧！（QQ分享）';
+        navigator.share(shareData).finally(()=>{
+          closeModal('dance-modal');
         });
       } else {
         // 自动复制链接到剪贴板
         let url = window.location.href;
+        let copyText = shareText + url;
         if (navigator.clipboard) {
-          navigator.clipboard.writeText(url).then(function() {
-            alert('链接已自动复制，您可以粘贴到' + type + '进行分享！');
+          navigator.clipboard.writeText(copyText).then(function() {
+            alert('留言和链接已自动复制，您可以粘贴到' + type + '进行分享！');
+            closeModal('dance-modal');
           }, function() {
-            alert('即将通过' + type + '分享\n如未弹出系统分享面板，请手动复制链接到' + type + '。');
+            alert('即将通过' + type + '分享\n如未弹出系统分享面板，请手动复制留言和链接到' + type + '。');
+            closeModal('dance-modal');
           });
         } else {
-          // 兼容旧浏览器
           let textarea = document.createElement('textarea');
-          textarea.value = url;
+          textarea.value = copyText;
           document.body.appendChild(textarea);
           textarea.select();
           try {
             document.execCommand('copy');
-            alert('链接已自动复制，您可以粘贴到' + type + '进行分享！');
+            alert('留言和链接已自动复制，您可以粘贴到' + type + '进行分享！');
           } catch (err) {
-            alert('即将通过' + type + '分享\n如未弹出系统分享面板，请手动复制链接到' + type + '。');
+            alert('即将通过' + type + '分享\n如未弹出系统分享面板，请手动复制留言和链接到' + type + '。');
           }
           document.body.removeChild(textarea);
+          closeModal('dance-modal');
         }
       }
     }
