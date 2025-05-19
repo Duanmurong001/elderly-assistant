@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乐龄生活+ - 银发族数字生活助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #fff8f0; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 480px; margin: 0 auto; }
+        .navbar { background: #ffb74d; color: #fff; padding: 18px 0; text-align: center; font-size: 26px; font-weight: bold; letter-spacing: 2px; }
+        .main-nav {
+            display: flex;
+            justify-content: space-between;
+            background: #fff3e0;
+            border-top: 1px solid #ffe0b2;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            max-width: 480px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+        .main-nav button {
+            flex: 1;
+            padding: 14px 0 8px 0;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #ff9800;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .main-nav button.active {
+            color: #fff;
+            background: #ff9800;
+        }
+        .main-nav i { font-size: 28px; margin-bottom: 2px; }
+        .section {
+            display: none;
+            padding: 28px 18px 80px 18px;
+            min-height: 70vh;
+        }
+        .section.active { display: block; }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(255,152,0,0.08);
+            padding: 22px 18px;
+            margin-bottom: 22px;
+        }
+        .card-title {
+            font-size: 22px;
+            color: #ff9800;
+            margin-bottom: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .big-btn {
+            width: 100%;
+            padding: 18px 0;
+            font-size: 22px;
+            background: #ff9800;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            cursor: pointer;
+        }
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        .quick-btn {
+            background: #fff3e0;
+            border-radius: 12px;
+            padding: 24px 0 12px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #ff9800;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .quick-btn i { font-size: 32px; margin-bottom: 8px; }
+        .quick-btn:hover { background: #ffe0b2; }
+        /* 系统时间样式 - 表盘设计 */
+        .system-time {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to right, #ffb74d, #ffa726);
+            padding: 10px;
+            margin: 0;
+            color: #fff;
+        }
+        
+        .clock-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .analog-clock {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 3px solid #fff;
+        }
+        
+        .digital-time {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        
+        .date-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .time-display {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            .quick-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+      <i class="fa-solid fa-heart-circle-bolt"></i> 乐龄生活+
+  </div>
+    <!-- 优化系统时间显示 - 表盘设计 -->
+    <div class="system-time">
+        <div class="clock-container">
+            <svg class="analog-clock" viewBox="0 0 100 100" width="80" height="80">
+                <!-- 表盘背景 -->
+                <circle cx="50" cy="50" r="45" fill="#fff" stroke="#ffb74d" stroke-width="2"/>
+                
+                <!-- 刻度 -->
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(0, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(30, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(60, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(90, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(120, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(150, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(180, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(210, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(240, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(270, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(300, 50, 50)"/>
+                <line x1="50" y1="10" x2="50" y2="20" stroke="#ff9800" stroke-width="2" transform="rotate(330, 50, 50)"/>
+                
+                <!-- 时针 -->
+                <line id="hour-hand" x1="50" y1="50" x2="50" y2="30" stroke="#ff9800" stroke-width="4" stroke-linecap="round"/>
+                
+                <!-- 分针 -->
+                <line id="minute-hand" x1="50" y1="50" x2="50" y2="25" stroke="#ff9800" stroke-width="3" stroke-linecap="round"/>
+                
+                <!-- 秒针 -->
+                <line id="second-hand" x1="50" y1="50" x2="50" y2="20" stroke="#f44336" stroke-width="1" stroke-linecap="round"/>
+                
+                <!-- 中心点 -->
+                <circle cx="50" cy="50" r="3" fill="#ff9800"/>
+            </svg>
+            <div class="digital-time">
+                <div class="date-display">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <span id="currentDate">2023年11月15日</span>
+                    <span id="currentDay">星期三</span>
+                </div>
+                <div class="time-display">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="currentTime">14:30</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="section active" id="home">
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-house"></i> <span id="userName">张大爷</span>，祝您健康快乐！</div>
+            <div style="font-size:20px;color:#ff9800;margin-bottom:12px;">今日健康提醒：</div>
+            <ul id="today-remind-list" style="font-size:18px;line-height:2;color:#555;"></ul>
+        </div>
+        <div class="quick-grid">
+            <button class="quick-btn" data-section="health"><i class="fa-solid fa-heart-pulse"></i>健康管理</button>
+            <button class="quick-btn" data-section="family"><i class="fa-solid fa-users"></i>亲情互动</button>
+            <button class="quick-btn" data-section="interest"><i class="fa-solid fa-chess-board"></i>兴趣圈子</button>
+            <button class="quick-btn" data-section="service"><i class="fa-solid fa-hand-holding-heart"></i>生活服务</button>
+        </div>
+    </section>
+    <section class="section" id="health">
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-heart-pulse"></i> 健康档案</div>
+            <div id="profile-info" style="font-size:18px;line-height:2;margin-bottom:10px;">
+                姓名：<span id="profile-name">张大爷</span><br>
+                年龄：<span id="profile-age">68</span> 岁<br>
+                性别：<span id="profile-gender">男</span><br>
+                身高：<span id="profile-height">170</span> cm　体重：<span id="profile-weight">68</span> kg<br>
+                慢性病史：<span id="profile-disease">高血压、糖尿病</span><br>
+                过敏史：<span id="profile-allergy">无</span>
+            </div>
+            <button class="big-btn" onclick="openProfileModal()">编辑档案</button>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-pills"></i> 服药提醒</div>
+            <ul id="remind-list" style="font-size:18px;line-height:2;margin-bottom:10px;">
+                <li>08:00  硝苯地平片 1片 <span style="color:#4caf50;">[待服用]</span></li>
+                <li>12:00  二甲双胍 1片 <span style="color:#4caf50;">[待服用]</span></li>
+                <li>20:00  硝苯地平片 1片 <span style="color:#aaa;">[已服用]</span></li>
+            </ul>
+            <button class="big-btn" onclick="openRemindModal()">添加提醒</button>
+            <button class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="openRemindHistoryModal()">历史记录</button>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-notes-medical"></i> 健康数据录入</div>
+            <div id="health-inputs" style="font-size:18px;line-height:2;margin-bottom:10px;">
+                血压：<span id="bp-val">130/80</span> mmHg　
+                血糖：<span id="sugar-val">6.2</span> mmol/L<br>
+                体温：<span id="temp-val">36.5</span> ℃　
+                心率：<span id="hr-val">72</span> 次/分
+            </div>
+            <button class="big-btn" onclick="openHealthInputModal()">录入/修改数据</button>
+            <div style="margin-top:10px;font-size:16px;color:#888;">
+                最近数据：<br>
+                <span id="recent-data">2024-05-01 08:00　血压 130/80 mmHg，血糖 6.2 mmol/L，体温 36.5℃，心率 72</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-people-group"></i> 家人健康查看</div>
+            <div id="family-list" style="display:flex;gap:18px;align-items:center;margin-bottom:10px;"></div>
+            <button class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="openAddFamilyModal()">添加家人</button>
+        </div>
+    </section>
+    <section class="section" id="family">
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-users"></i> 亲情互动</div>
+            <button class="big-btn" onclick="openVideoModal()">一键视频通话</button>
+            <button class="big-btn" onclick="openAlbumModal()">家庭相册</button>
+            <button class="big-btn" onclick="openCalendarModal()">亲情日历</button>
+            <button class="big-btn" onclick="openVoiceModal()">语音留言</button>
+        </div>
+    </section>
+    <section class="section" id="interest">
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-chess-board"></i> 兴趣圈子</div>
+            <button class="big-btn" onclick="openDanceModal()">广场舞圈</button>
+            <button class="big-btn" onclick="openCalligraphyModal()">书法交流</button>
+            <button class="big-btn" onclick="openChessModal()">象棋对弈</button>
+            <button class="big-btn" onclick="openDialectModal()">地方方言聊天室</button>
+        </div>
+    </section>
+    <section class="section" id="service">
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-hand-holding-heart"></i> 生活服务</div>
+            <button class="big-btn" onclick="openMealModal()">本地助餐</button>
+            <button class="big-btn" onclick="openHouseModal()">家政服务</button>
+            <button class="big-btn" onclick="openMedicalModal()">医疗挂号</button>
+            <button class="big-btn" onclick="openActivityModal()">社区活动</button>
+        </div>
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-phone-volume"></i> 紧急求助</div>
+            <button class="big-btn" style="background:#f44336;" onclick="callPhone('120')">
+                <i class="fa-solid fa-ambulance"></i> 呼叫急救 (120)
+            </button>
+            <button class="big-btn" style="background:#2196F3;" onclick="callPhone('110')">
+                <i class="fa-solid fa-shield-alt"></i> 呼叫警察 (110)
+            </button>
+            <button class="big-btn" style="background:#4CAF50;" onclick="callPhone('119')">
+                <i class="fa-solid fa-fire-extinguisher"></i> 呼叫消防 (119)
+            </button>
+            <button class="big-btn" onclick="callFamily()">
+                <i class="fa-solid fa-user-friends"></i> 呼叫家人
+            </button>
+        </div>
+    </section>
+    <section class="section" id="mine">
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-user"></i> 我的</div>
+            <button class="big-btn" onclick="openProfileInfoModal()">个人信息</button>
+            <button class="big-btn" onclick="openFamilyManageModal()">家人管理</button>
+            <button class="big-btn" onclick="openSettingsModal()">设置</button>
+        </div>
+    </section>
+    <div class="main-nav">
+        <button class="active" data-section="home"><i class="fa-solid fa-house"></i>首页</button>
+        <button data-section="health"><i class="fa-solid fa-heart-pulse"></i>健康</button>
+        <button data-section="family"><i class="fa-solid fa-users"></i>亲情</button>
+        <button data-section="interest"><i class="fa-solid fa-chess-board"></i>兴趣</button>
+        <button data-section="service"><i class="fa-solid fa-hand-holding-heart"></i>服务</button>
+        <button data-section="mine"><i class="fa-solid fa-user"></i>我的</button>
+    </div>
+    <script>
+    function callPhone(number) {
+      window.location.href = 'tel:' + number;
+    }
+    function callFamily() {
+      if (!family || family.length === 0) {
+        alert('请先添加家人信息');
+        return;
+      }
+      if (family.length === 1) {
+        if (family[0].phone && family[0].phone.trim()) {
+          callPhone(family[0].phone);
+        } else {
+          alert('家人未填写手机号');
+        }
+        return;
+      }
+      showFamilyCallModal();
+    }
+    function showFamilyCallModal() {
+      let html = '<div id="family-call-modal" style="position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;">';
+      html += '<div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:220px;max-width:90vw;">';
+      html += '<div style="font-size:20px;font-weight:bold;margin-bottom:18px;">选择要呼叫的家人</div>';
+      html += family.map((f,i)=>`<div style="margin-bottom:12px;"><button style="font-size:18px;padding:8px 18px;background:#ff9800;color:#fff;border:none;border-radius:8px;" onclick="callPhone('${f.phone}');closeFamilyCallModal();">${f.name}（${f.phone||'未填写手机号'}）</button></div>`).join('');
+      html += '<button style="margin-top:10px;font-size:16px;padding:4px 16px;background:#ffd54f;color:#ff9800;border:none;border-radius:8px;" onclick="closeFamilyCallModal()">取消</button>';
+      html += '</div></div>';
+      document.body.insertAdjacentHTML('beforeend', html);
+    }
+    function closeFamilyCallModal() {
+      const modal = document.getElementById('family-call-modal');
+      if (modal) modal.remove();
+    }
+    // 全局弹窗关闭函数，放在所有脚本最前面
+    function closeModal(id) {
+      var modal = document.getElementById(id);
+      if (modal) {
+        modal.style.display = 'none';
+        // 调试输出
+        // console.log('已关闭弹窗', id, modal);
+      } else {
+        console.warn('未找到弹窗id:', id);
+      }
+    }
+        // 页面切换
+        document.querySelectorAll('.main-nav button, .quick-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const section = btn.getAttribute('data-section');
+                if (!section) return;
+                document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+                document.querySelectorAll('.main-nav button').forEach(b => b.classList.remove('active'));
+                if(btn.parentElement.classList.contains('main-nav')) btn.classList.add('active');
+            });
+        });
+        
+        // 添加系统时间更新功能 - 表盘设计
+        function updateSystemTime() {
+            const now = new Date();
+            const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const day = days[now.getDay()];
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // 更新数字时间显示
+            document.getElementById('currentDate').textContent = `${year}年${month}月${date}日`;
+            document.getElementById('currentDay').textContent = day;
+            document.getElementById('currentTime').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            
+            // 更新模拟时钟 - 完全重写指针角度计算
+            // 时针：每小时旋转30度，每分钟额外旋转0.5度
+            const hourDeg = (hours % 12) * 30 + minutes * 0.5;
+            // 分针：每分钟旋转6度
+            const minuteDeg = minutes * 6;
+            // 秒针：每秒旋转6度
+            const secondDeg = seconds * 6;
+            
+            const hourHand = document.getElementById('hour-hand');
+            const minuteHand = document.getElementById('minute-hand');
+            const secondHand = document.getElementById('second-hand');
+            
+            if (hourHand && minuteHand && secondHand) {
+                // 使用SVG的transform属性进行旋转
+                hourHand.setAttribute('transform', `rotate(${hourDeg}, 50, 50)`);
+                minuteHand.setAttribute('transform', `rotate(${minuteDeg}, 50, 50)`);
+                secondHand.setAttribute('transform', `rotate(${secondDeg}, 50, 50)`);
+            }
+        }
+        
+        // 初始化时间并每秒更新一次
+        updateSystemTime();
+        setInterval(updateSystemTime, 1000);
+        
+        // 同步用户姓名到首页
+        function syncUserName() {
+            const profileName = document.getElementById('profile-name');
+            const welcomeText = document.getElementById('welcomeText');
+            if (profileName && welcomeText) {
+                welcomeText.textContent = profileName.textContent;
+                // 保存到localStorage以便下次加载时使用
+                localStorage.setItem('userName', profileName.textContent);
+            }
+        }
+    </script>
+
+    <!-- 健康档案编辑弹窗 -->
+    <div class="modal" id="profile-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:280px;max-width:90vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">编辑健康档案</div>
+        <form id="profile-form" onsubmit="saveProfile(event)">
+          <div style="margin-bottom:12px;">姓名：<input id="input-name" type="text" style="width:70%;font-size:18px;"></div>
+          <div style="margin-bottom:12px;">年龄：<input id="input-age" type="number" min="1" max="120" style="width:70%;font-size:18px;"></div>
+          <div style="margin-bottom:12px;">性别：<select id="input-gender" style="width:72%;font-size:18px;"><option>男</option><option>女</option></select></div>
+          <div style="margin-bottom:12px;">身高：<input id="input-height" type="number" style="width:60px;font-size:18px;"> cm　体重：<input id="input-weight" type="number" style="width:60px;font-size:18px;"> kg</div>
+          <div style="margin-bottom:12px;">慢性病史：<input id="input-disease" type="text" style="width:70%;font-size:18px;"></div>
+          <div style="margin-bottom:18px;">过敏史：<input id="input-allergy" type="text" style="width:70%;font-size:18px;"></div>
+          <button type="submit" class="big-btn">保存</button>
+          <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('profile-modal')">取消</button>
+        </form>
+      </div>
+    </div>
+    <!-- 添加提醒弹窗 -->
+    <div class="modal" id="remind-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:280px;max-width:90vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">添加服药提醒</div>
+        <form id="remind-form" onsubmit="saveRemind(event)">
+          <div style="margin-bottom:12px;">时间：<input id="remind-time" type="time" style="font-size:18px;"></div>
+          <div style="margin-bottom:12px;">药品名称：<input id="remind-name" type="text" style="font-size:18px;"></div>
+          <div style="margin-bottom:12px;">剂量：<input id="remind-dose" type="text" style="font-size:18px;" placeholder="如1片"></div>
+          <button type="submit" class="big-btn">保存</button>
+          <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('remind-modal')">取消</button>
+        </form>
+      </div>
+    </div>
+    <!-- 服药历史弹窗 -->
+    <div class="modal" id="remind-history-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:280px;max-width:90vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">服药历史记录</div>
+        <ul id="remind-history-list" style="font-size:18px;line-height:2;margin-bottom:10px;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('remind-history-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 健康数据录入弹窗 -->
+    <div class="modal" id="health-input-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:280px;max-width:90vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">录入健康数据</div>
+        <form id="health-form" onsubmit="saveHealthData(event)">
+          <div style="margin-bottom:12px;">血压：<input id="input-bp" type="text" style="width:80px;font-size:18px;"> mmHg</div>
+          <div style="margin-bottom:12px;">血糖：<input id="input-sugar" type="text" style="width:80px;font-size:18px;"> mmol/L</div>
+          <div style="margin-bottom:12px;">体温：<input id="input-temp" type="text" style="width:80px;font-size:18px;"> ℃</div>
+          <div style="margin-bottom:18px;">心率：<input id="input-hr" type="text" style="width:80px;font-size:18px;"> 次/分</div>
+          <button type="submit" class="big-btn">保存</button>
+          <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('health-input-modal')">取消</button>
+        </form>
+      </div>
+    </div>
+    <!-- 家人健康查看弹窗（可编辑） -->
+    <div class="modal" id="family-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:280px;max-width:90vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">编辑家人健康档案</div>
+        <form id="family-edit-form" onsubmit="saveFamilyEdit(event)">
+          <div style="text-align:center;margin-bottom:12px;">
+            <img id="family-avatar-preview" src="" style="width:56px;height:56px;border-radius:50%;border:2px solid #ffb74d;object-fit:cover;">
+            <br>
+            <label for="family-avatar-upload" style="display:inline-block;margin-top:8px;">
+              <button type="button" id="family-avatar-btn" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;cursor:pointer;">上传头像</button>
+            </label>
+            <input id="family-avatar-upload" type="file" accept="image/*" style="display:none;">
+            <span id="family-avatar-filename" style="font-size:15px;color:#888;margin-left:8px;"></span>
+          </div>
+          <div style="margin-bottom:12px;">姓名：<input id="family-edit-name" type="text" style="font-size:18px;"></div>
+          <div style="margin-bottom:12px;">关系：<input id="family-edit-relation" type="text" style="font-size:18px;"></div>
+          <div style="margin-bottom:12px;">手机号：<input id="family-edit-phone" type="text" style="font-size:18px;"></div>
+          <div style="margin-bottom:18px;">健康状态：<input id="family-edit-status" type="text" style="font-size:18px;"></div>
+          <button type="submit" class="big-btn">保存</button>
+          <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('family-modal')">取消</button>
+        </form>
+      </div>
+    </div>
+    <!-- 添加家人弹窗 -->
+    <div class="modal" id="add-family-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:280px;max-width:90vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">添加家人</div>
+        <form id="add-family-form" onsubmit="saveFamily(event)">
+          <div style="margin-bottom:12px;">姓名：<input id="family-name" type="text" style="font-size:18px;"></div>
+          <div style="margin-bottom:12px;">关系：<input id="family-relation" type="text" style="font-size:18px;"></div>
+          <div style="margin-bottom:12px;">手机号：<input id="family-phone" type="text" style="font-size:18px;"></div>
+          <div style="margin-bottom:12px;">健康状态：<input id="family-status" type="text" style="font-size:18px;"></div>
+          <button type="submit" class="big-btn">保存</button>
+          <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('add-family-modal')">取消</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 一键视频通话弹窗 -->
+    <div class="modal" id="video-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:280px;max-width:90vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">一键视频通话</div>
+        <form id="video-form" onsubmit="startVideoCall(event)">
+          <div style="margin-bottom:18px;">
+            <label style="font-size:18px;">选择家人：</label>
+            <select id="video-family-select" style="font-size:18px;width:70%;">
+            </select>
+          </div>
+          <button type="submit" class="big-btn">发起视频通话</button>
+          <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('video-modal')">取消</button>
+        </form>
+      </div>
+    </div>
+    <!-- 家庭相册弹窗 -->
+    <div class="modal" id="album-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">家庭相册</div>
+        <label for="album-upload" style="font-size:18px;display:block;margin-bottom:6px;">上传照片：</label>
+        <label for="album-upload" style="display:inline-block;">
+          <button type="button" id="album-upload-btn" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;cursor:pointer;">选择照片</button>
+        </label>
+        <input id="album-upload" type="file" accept="image/*" multiple style="display:none;">
+        <span id="album-upload-filename" style="font-size:15px;color:#888;margin-left:8px;"></span>
+        <div id="album-list" style="display:flex;flex-wrap:wrap;gap:12px;"></div>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('album-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 亲情日历弹窗 -->
+    <div class="modal" id="calendar-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">亲情日历</div>
+        <form id="calendar-form" onsubmit="saveCalendarEvent(event)">
+          <input id="calendar-date" type="date" style="font-size:18px;margin-bottom:8px;">
+          <input id="calendar-title" type="text" placeholder="事件内容（如生日、聚会）" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <button type="submit" class="big-btn" style="padding:8px 0;font-size:18px;">添加事件</button>
+        </form>
+        <ul id="calendar-list" style="font-size:18px;line-height:2;margin-top:10px;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('calendar-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 语音留言弹窗 -->
+    <div class="modal" id="voice-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">语音留言</div>
+        <label for="voice-upload" style="font-size:18px;display:block;margin-bottom:6px;">上传语音：</label>
+        <label for="voice-upload" style="display:inline-block;">
+          <button type="button" id="voice-upload-btn" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;cursor:pointer;">选择语音文件</button>
+        </label>
+        <input id="voice-upload" type="file" accept="audio/*" style="display:none;">
+        <span id="voice-upload-filename" style="font-size:15px;color:#888;margin-left:8px;"></span>
+        <button class="big-btn" style="padding:8px 0;font-size:18px;margin-bottom:10px;" onclick="simulateRecord()">模拟录音</button>
+        <ul id="voice-list" style="font-size:18px;line-height:2;margin-top:10px;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('voice-modal')">关闭</button>
+      </div>
+    </div>
+
+    <!-- 广场舞圈弹窗 -->
+    <div class="modal" id="dance-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">广场舞圈</div>
+        <label for="dance-upload" style="font-size:18px;display:block;margin-bottom:6px;">上传舞蹈视频：</label>
+        <label for="dance-upload" style="display:inline-block;">
+          <button type="button" id="dance-upload-btn" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;cursor:pointer;">选择视频</button>
+        </label>
+        <input id="dance-upload" type="file" accept="video/*" style="display:none;">
+        <span id="dance-upload-filename" style="font-size:15px;color:#888;margin-left:8px;"></span>
+        <div id="dance-list" style="margin:12px 0;"></div>
+        <div style="margin-top:10px;font-size:18px;font-weight:bold;">留言区</div>
+        <form onsubmit="addDanceMsg(event)">
+          <input id="dance-msg-input" type="text" placeholder="说点什么..." style="font-size:18px;width:70%;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">发送</button>
+        </form>
+        <div id="dance-share-row" style="display:flex;gap:12px;margin-top:10px;justify-content:center;">
+          <button onclick="shareTo('微信')" style="font-size:16px;padding:6px 18px;background:#09bb07;color:#fff;border:none;border-radius:8px;display:flex;align-items:center;gap:6px;">
+            <i class="fa-brands fa-weixin"></i> 微信
+          </button>
+          <button onclick="shareTo('钉钉')" style="font-size:16px;padding:6px 18px;background:#1677ff;color:#fff;border:none;border-radius:8px;display:flex;align-items:center;gap:6px;">
+            <i class="fa-brands fa-dingtalk"></i> 钉钉
+          </button>
+          <button onclick="shareTo('QQ')" style="font-size:16px;padding:6px 18px;background:#12b7f5;color:#fff;border:none;border-radius:8px;display:flex;align-items:center;gap:6px;">
+            <i class="fa-brands fa-qq"></i> QQ
+          </button>
+        </div>
+        <ul id="dance-msg-list" style="font-size:17px;line-height:2;margin-top:6px;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('dance-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 书法交流弹窗 -->
+    <div class="modal" id="calligraphy-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">书法交流</div>
+        <label for="calligraphy-upload" style="font-size:18px;display:block;margin-bottom:6px;">上传书法作品：</label>
+        <label for="calligraphy-upload" style="display:inline-block;">
+          <button type="button" id="calligraphy-upload-btn" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;cursor:pointer;">选择图片</button>
+        </label>
+        <input id="calligraphy-upload" type="file" accept="image/*" style="display:none;">
+        <span id="calligraphy-upload-filename" style="font-size:15px;color:#888;margin-left:8px;"></span>
+        <div id="calligraphy-list" style="display:flex;flex-wrap:wrap;gap:12px;margin:12px 0;"></div>
+        <div style="margin-top:10px;font-size:18px;font-weight:bold;">留言区</div>
+        <form onsubmit="addCalligraphyMsg(event)">
+          <input id="calligraphy-msg-input" type="text" placeholder="说点什么..." style="font-size:18px;width:70%;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">发送</button>
+        </form>
+        <ul id="calligraphy-msg-list" style="font-size:17px;line-height:2;margin-top:6px;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('calligraphy-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 象棋对弈弹窗 -->
+    <div class="modal" id="chess-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">象棋对弈</div>
+        <form onsubmit="addChessGame(event)">
+          <input id="chess-opponent" type="text" placeholder="对手昵称" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">发起对局</button>
+        </form>
+        <ul id="chess-list" style="font-size:17px;line-height:2;margin:10px 0;"></ul>
+        <div style="margin-top:10px;font-size:18px;font-weight:bold;">留言区</div>
+        <form onsubmit="addChessMsg(event)">
+          <input id="chess-msg-input" type="text" placeholder="说点什么..." style="font-size:18px;width:70%;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">发送</button>
+        </form>
+        <ul id="chess-msg-list" style="font-size:17px;line-height:2;margin-top:6px;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('chess-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 地方方言聊天室弹窗 -->
+    <div class="modal" id="dialect-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">地方方言聊天室</div>
+        <div id="dialect-list" style="font-size:17px;line-height:2;margin-bottom:10px;max-height:180px;overflow-y:auto;background:#f8f8f8;padding:8px 6px;border-radius:8px;"></div>
+        <form onsubmit="addDialectMsg(event)">
+          <input id="dialect-msg-input" type="text" placeholder="输入聊天内容..." style="font-size:18px;width:70%;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">发送</button>
+        </form>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('dialect-modal')">关闭</button>
+      </div>
+    </div>
+
+    <!-- 本地助餐弹窗 -->
+    <div class="modal" id="meal-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">本地助餐</div>
+        <form onsubmit="addMealOrder(event)">
+          <input id="meal-name" type="text" placeholder="联系人姓名" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="meal-phone" type="text" placeholder="联系电话" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="meal-address" type="text" placeholder="送餐地址" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="meal-date" type="date" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="meal-time" type="time" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">下单</button>
+        </form>
+        <ul id="meal-list" style="font-size:17px;line-height:2;margin:10px 0;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('meal-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 家政服务弹窗 -->
+    <div class="modal" id="house-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">家政服务</div>
+        <form onsubmit="addHouseOrder(event)">
+          <input id="house-name" type="text" placeholder="联系人姓名" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="house-phone" type="text" placeholder="联系电话" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="house-type" type="text" placeholder="服务类型（如保洁、维修）" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="house-date" type="date" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="house-time" type="time" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">预约</button>
+        </form>
+        <ul id="house-list" style="font-size:17px;line-height:2;margin:10px 0;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('house-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 医疗挂号弹窗 -->
+    <div class="modal" id="medical-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">医疗挂号</div>
+        <form onsubmit="addMedicalOrder(event)">
+          <input id="medical-name" type="text" placeholder="就诊人姓名" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="medical-hospital" type="text" placeholder="医院名称" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="medical-dept" type="text" placeholder="科室" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="medical-date" type="date" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="medical-time" type="time" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">挂号</button>
+        </form>
+        <ul id="medical-list" style="font-size:17px;line-height:2;margin:10px 0;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('medical-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 社区活动弹窗 -->
+    <div class="modal" id="activity-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">社区活动</div>
+        <form onsubmit="addActivityOrder(event)">
+          <input id="activity-title" type="text" placeholder="活动名称" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="activity-name" type="text" placeholder="报名人姓名" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="activity-date" type="date" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="activity-time" type="time" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">报名</button>
+        </form>
+        <ul id="activity-list" style="font-size:17px;line-height:2;margin:10px 0;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('activity-modal')">关闭</button>
+      </div>
+    </div>
+
+    <!-- 个人信息弹窗 -->
+    <div class="modal" id="profile-info-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">个人信息</div>
+        <form id="profile-info-form" onsubmit="saveProfileInfo(event)">
+          <div style="text-align:center;margin-bottom:12px;">
+            <img id="profile-info-avatar" src="https://cdn.jsdelivr.net/gh/duogongneng/mycdn@master/avatar/user.png" style="width:56px;height:56px;border-radius:50%;border:2px solid #ffb74d;object-fit:cover;">
+            <br>
+            <label for="profile-info-avatar-upload" style="display:inline-block;margin-top:8px;">
+              <button type="button" id="profile-info-avatar-btn" onclick="pickImage()" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;cursor:pointer;">上传头像</button>
+            </label>
+            <input id="profile-info-avatar-upload" type="file" accept="image/*" style="display:none;">
+            <span id="profile-info-avatar-filename" style="font-size:15px;color:#888;margin-left:8px;"></span>
+          </div>
+          <div style="margin-bottom:12px;">
+            姓名：<input id="profile-info-name" type="text" style="font-size:18px;">
+            <button type="button" onclick="startSpeechRecognition('profile-info-name')" style="font-size:16px;padding:4px 8px;background:#ff9800;color:#fff;border:none;border-radius:8px;margin-left:8px;">
+              <i class="fas fa-microphone"></i>
+            </button>
+          </div>
+          <div style="margin-bottom:12px;">
+            手机号：<input id="profile-info-phone" type="text" style="font-size:18px;">
+            <button type="button" onclick="startSpeechRecognition('profile-info-phone')" style="font-size:16px;padding:4px 8px;background:#ff9800;color:#fff;border:none;border-radius:8px;margin-left:8px;">
+              <i class="fas fa-microphone"></i>
+            </button>
+          </div>
+          <div style="margin-bottom:18px;">性别：<select id="profile-info-gender" style="font-size:18px;"><option>男</option><option>女</option></select></div>
+          <button type="submit" class="big-btn">保存</button>
+          <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('profile-info-modal')">取消</button>
+        </form>
+      </div>
+    </div>
+    <!-- 家人管理弹窗 -->
+    <div class="modal" id="family-manage-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;max-height:90vh;overflow-y:auto;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">家人管理</div>
+        <form id="family-manage-form" onsubmit="addFamilyManage(event)">
+          <input id="family-manage-name" type="text" placeholder="姓名" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <input id="family-manage-relation" type="text" placeholder="关系" style="font-size:18px;width:60%;margin-bottom:8px;">
+          <button type="submit" style="font-size:16px;padding:4px 16px;background:#ff9800;color:#fff;border:none;border-radius:8px;">添加家人</button>
+        </form>
+        <ul id="family-manage-list" style="font-size:17px;line-height:2;margin:10px 0;"></ul>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;margin-top:18px;" onclick="closeModal('family-manage-modal')">关闭</button>
+      </div>
+    </div>
+    <!-- 设置弹窗 -->
+    <div class="modal" id="settings-modal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px 22px;min-width:320px;max-width:95vw;">
+        <div style="font-size:22px;color:#ff9800;font-weight:bold;margin-bottom:18px;">设置</div>
+        <div style="margin-bottom:12px;">主题色：
+          <select id="setting-theme" style="font-size:18px;">
+            <option value="#ff9800">橙色</option>
+            <option value="#1976D2">蓝色</option>
+            <option value="#4CAF50">绿色</option>
+          </select>
+        </div>
+        <div style="margin-bottom:18px;">字体大小：
+          <select id="setting-fontsize" style="font-size:18px;">
+            <option value="18px">大</option>
+            <option value="16px">中</option>
+            <option value="14px">小</option>
+          </select>
+        </div>
+        <button class="big-btn" onclick="saveSettings()">保存</button>
+        <button type="button" class="big-btn" style="background:#ffd54f;color:#ff9800;" onclick="closeModal('settings-modal')">关闭</button>
+      </div>
+    </div>
+
+    <script>
+    // 全局用户信息对象
+    let profileInfo = {
+      avatar: 'https://cdn.jsdelivr.net/gh/duogongneng/mycdn@master/avatar/user.png',
+      name: '张大爷',
+      phone: '13888888888',
+      gender: '男',
+      age: 68,
+      height: 170,
+      weight: 68,
+      disease: '高血压、糖尿病',
+      allergy: '无'
+    };
+
+    function saveProfileInfoToStorage() {
+      localStorage.setItem('profileInfo', JSON.stringify(profileInfo));
+    }
+    function loadProfileInfoFromStorage() {
+      const data = localStorage.getItem('profileInfo');
+      if (data) {
+        profileInfo = JSON.parse(data);
+      }
+    }
+    function renderAllProfileInfo() {
+      // 首页
+      if(document.getElementById('userName'))
+        document.getElementById('userName').innerText = profileInfo.name;
+      // 健康档案
+      if(document.getElementById('profile-name'))
+        document.getElementById('profile-name').innerText = profileInfo.name;
+      if(document.getElementById('profile-age'))
+        document.getElementById('profile-age').innerText = profileInfo.age;
+      if(document.getElementById('profile-gender'))
+        document.getElementById('profile-gender').innerText = profileInfo.gender;
+      if(document.getElementById('profile-height'))
+        document.getElementById('profile-height').innerText = profileInfo.height;
+      if(document.getElementById('profile-weight'))
+        document.getElementById('profile-weight').innerText = profileInfo.weight;
+      if(document.getElementById('profile-disease'))
+        document.getElementById('profile-disease').innerText = profileInfo.disease;
+      if(document.getElementById('profile-allergy'))
+        document.getElementById('profile-allergy').innerText = profileInfo.allergy;
+      // 我的页面弹窗
+      if(document.getElementById('profile-info-avatar'))
+        document.getElementById('profile-info-avatar').src = profileInfo.avatar;
+      if(document.getElementById('profile-info-name'))
+        document.getElementById('profile-info-name').value = profileInfo.name;
+      if(document.getElementById('profile-info-phone'))
+        document.getElementById('profile-info-phone').value = profileInfo.phone;
+      if(document.getElementById('profile-info-gender'))
+        document.getElementById('profile-info-gender').value = profileInfo.gender;
+    }
+    // 我的-个人信息弹窗
+    function openProfileInfoModal() {
+      renderAllProfileInfo();
+      document.getElementById('profile-info-avatar-upload').value = '';
+      document.getElementById('profile-info-avatar-filename').innerText = '';
+      document.getElementById('profile-info-modal').style.display = 'flex';
+    }
+    document.getElementById('profile-info-avatar-btn').onclick = function() {
+      document.getElementById('profile-info-avatar-upload').click();
+    };
+    document.getElementById('profile-info-avatar-upload').onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('profile-info-avatar-filename').innerText = file.name;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('profile-info-avatar').src = evt.target.result;
+        document.getElementById('profile-info-avatar').setAttribute('data-base64', evt.target.result);
+      };
+      reader.readAsDataURL(file);
+    };
+    function saveProfileInfo(e) {
+      e.preventDefault();
+      profileInfo.name = document.getElementById('profile-info-name').value;
+      profileInfo.phone = document.getElementById('profile-info-phone').value;
+      profileInfo.gender = document.getElementById('profile-info-gender').value;
+      const base64 = document.getElementById('profile-info-avatar').getAttribute('data-base64');
+      if(base64) profileInfo.avatar = base64;
+      saveProfileInfoToStorage();
+      renderAllProfileInfo();
+      closeModal('profile-info-modal');
+    }
+    // 健康档案编辑弹窗
+    function openProfileModal() {
+      document.getElementById('input-name').value = profileInfo.name;
+      document.getElementById('input-age').value = profileInfo.age;
+      document.getElementById('input-gender').value = profileInfo.gender;
+      document.getElementById('input-height').value = profileInfo.height;
+      document.getElementById('input-weight').value = profileInfo.weight;
+      document.getElementById('input-disease').value = profileInfo.disease;
+      document.getElementById('input-allergy').value = profileInfo.allergy;
+      document.getElementById('profile-modal').style.display = 'flex';
+    }
+    function saveProfile(e) {
+      e.preventDefault();
+      profileInfo.name = document.getElementById('input-name').value;
+      profileInfo.age = document.getElementById('input-age').value;
+      profileInfo.gender = document.getElementById('input-gender').value;
+      profileInfo.height = document.getElementById('input-height').value;
+      profileInfo.weight = document.getElementById('input-weight').value;
+      profileInfo.disease = document.getElementById('input-disease').value;
+      profileInfo.allergy = document.getElementById('input-allergy').value;
+      saveProfileInfoToStorage();
+      renderAllProfileInfo();
+      closeModal('profile-modal');
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      loadProfileInfoFromStorage();
+      renderAllProfileInfo();
+      renderReminds();
+      renderHealthData();
+      renderFamily();
+      // 家人健康查看-头像上传
+      if(document.getElementById('family-avatar-btn')){
+        document.getElementById('family-avatar-btn').onclick = function() {
+          document.getElementById('family-avatar-upload').click();
+        };
+        document.getElementById('family-avatar-upload').onchange = function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          document.getElementById('family-avatar-filename').innerText = file.name;
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            document.getElementById('family-avatar-preview').src = evt.target.result;
+            document.getElementById('family-avatar-preview').setAttribute('data-base64', evt.target.result);
+          };
+          reader.readAsDataURL(file);
+        };
+      }
+      applyThemeFromStorage();
+      loadMealOrdersFromStorage();
+      renderMeal();
+    });
+
+    let reminds = [
+      {time:'08:00', name:'硝苯地平片', dose:'1片', status:'待服用'},
+      {time:'12:00', name:'二甲双胍', dose:'1片', status:'待服用'},
+      {time:'20:00', name:'硝苯地平片', dose:'1片', status:'已服用'}
+    ];
+    let editingRemindIdx = null;
+    function renderReminds() {
+      let ul = document.getElementById('remind-list');
+      ul.innerHTML = reminds.map((r, i) =>
+        `<li style="display:flex;align-items:center;gap:8px;">
+          <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            ${r.time}  ${r.name} ${r.dose} 
+            <span style='color:${r.status==='已服用'?'#aaa':'#4caf50'};'>[${r.status}]</span>
+          </span>
+          <button onclick="editRemind(${i})" style="font-size:15px;padding:2px 8px;">编辑</button>
+          <button onclick="deleteRemind(${i})" style="font-size:15px;padding:2px 8px;color:#f44336;">删除</button>
+        </li>`
+      ).join('');
+      renderTodayRemind();
+    }
+    function openRemindModal() {
+      editingRemindIdx = null;
+      document.getElementById('remind-form').reset();
+      document.getElementById('remind-modal').style.display = 'flex';
+    }
+    function editRemind(idx) {
+      editingRemindIdx = idx;
+      const r = reminds[idx];
+      document.getElementById('remind-time').value = r.time;
+      document.getElementById('remind-name').value = r.name;
+      document.getElementById('remind-dose').value = r.dose;
+      document.getElementById('remind-modal').style.display = 'flex';
+    }
+    function saveRemind(e) {
+      e.preventDefault();
+      const newRemind = {
+        time: document.getElementById('remind-time').value,
+        name: document.getElementById('remind-name').value,
+        dose: document.getElementById('remind-dose').value,
+        status: '待服用'
+      };
+      if (editingRemindIdx !== null) {
+        reminds[editingRemindIdx] = newRemind;
+        editingRemindIdx = null;
+      } else {
+        reminds.push(newRemind);
+      }
+      renderReminds();
+      closeModal('remind-modal');
+    }
+    function renderTodayRemind() {
+      const ul = document.getElementById('today-remind-list');
+      if (!ul) return;
+      if (reminds.length === 0) {
+        ul.innerHTML = '<li>暂无健康提醒</li>';
+        return;
+      }
+      ul.innerHTML = reminds.map((r, i) =>
+        `<li>
+          ${r.time} ${r.name} ${r.dose}
+          <button onclick="confirmRemind(${i})" 
+            style="margin-left:8px;padding:2px 12px;${r.status==='已服用'?'background:#ccc;color:#fff;cursor:not-allowed;':''}" 
+            ${r.status==='已服用'?'disabled':''}>
+            ${r.status==='已服用'?'已完成':'确认'}
+          </button>
+        </li>`
+      ).join('');
+    }
+    function confirmRemind(idx) {
+      if (reminds[idx].status === '已服用') return;
+      reminds[idx].status = '已服用';
+      renderReminds(); // 会自动刷新首页和健康界面
+    }
+    function deleteRemind(idx) {
+      if (confirm('确定要删除该提醒吗？')) {
+        reminds.splice(idx, 1);
+        renderReminds();
+      }
+    }
+
+    // 健康数据历史支持
+    let healthDataList = [
+      {bp:'130/80', sugar:'6.2', temp:'36.5', hr:'72', recent:'2024-05-01 08:00　血压 130/80 mmHg，血糖 6.2 mmol/L，体温 36.5℃，心率 72'}
+    ];
+    let editingHealthIdx = null;
+    function renderHealthData() {
+      // 显示最新一条
+      const latest = healthDataList.length > 0 ? healthDataList[healthDataList.length-1] : {bp:'', sugar:'', temp:'', hr:'', recent:''};
+      document.getElementById('bp-val').innerText = latest.bp;
+      document.getElementById('sugar-val').innerText = latest.sugar;
+      document.getElementById('temp-val').innerText = latest.temp;
+      document.getElementById('hr-val').innerText = latest.hr;
+      document.getElementById('recent-data').innerText = latest.recent;
+      renderHealthHistory();
+    }
+    function renderHealthHistory() {
+      let container = document.getElementById('health-history-list');
+      if (!container) {
+        // 动态插入历史列表容器
+        const card = document.querySelector('.card-title i.fa-notes-medical').parentElement.parentElement;
+        const div = document.createElement('div');
+        div.id = 'health-history-list';
+        div.style = 'margin-top:10px;font-size:16px;color:#888;';
+        card.appendChild(div);
+        container = div;
+      }
+      if (healthDataList.length <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = '<b>历史记录：</b><ul style="padding-left:18px;">' +
+        healthDataList.slice(0,-1).map((d,i) =>
+          `<li style="display:flex;align-items:center;gap:8px;">
+            <span style="flex:1;">${d.recent}</span>
+            <button onclick="editHealthData(${i})" style="font-size:14px;padding:2px 8px;">编辑</button>
+            <button onclick="deleteHealthData(${i})" style="font-size:14px;padding:2px 8px;color:#f44336;">删除</button>
+          </li>`
+        ).join('') + '</ul>';
+    }
+    function openHealthInputModal(idx) {
+      if (typeof idx === 'number') {
+        editingHealthIdx = idx;
+        const d = healthDataList[idx];
+        document.getElementById('input-bp').value = d.bp;
+        document.getElementById('input-sugar').value = d.sugar;
+        document.getElementById('input-temp').value = d.temp;
+        document.getElementById('input-hr').value = d.hr;
+      } else {
+        editingHealthIdx = null;
+        // 默认填最新
+        const latest = healthDataList.length > 0 ? healthDataList[healthDataList.length-1] : {bp:'', sugar:'', temp:'', hr:''};
+        document.getElementById('input-bp').value = latest.bp;
+        document.getElementById('input-sugar').value = latest.sugar;
+        document.getElementById('input-temp').value = latest.temp;
+        document.getElementById('input-hr').value = latest.hr;
+      }
+      document.getElementById('health-input-modal').style.display = 'flex';
+    }
+    function saveHealthData(e) {
+      e.preventDefault();
+      const bp = document.getElementById('input-bp').value;
+      const sugar = document.getElementById('input-sugar').value;
+      const temp = document.getElementById('input-temp').value;
+      const hr = document.getElementById('input-hr').value;
+      const now = new Date();
+      const dateStr = now.getFullYear() + '-' + 
+                     (now.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                     now.getDate().toString().padStart(2, '0') + ' ' + 
+                     now.getHours().toString().padStart(2, '0') + ':' + 
+                     now.getMinutes().toString().padStart(2, '0');
+      const recent = `${dateStr}　血压 ${bp} mmHg，血糖 ${sugar} mmol/L，体温 ${temp}℃，心率 ${hr}`;
+      const newData = {bp, sugar, temp, hr, recent};
+      if (editingHealthIdx !== null) {
+        healthDataList[editingHealthIdx] = newData;
+        editingHealthIdx = null;
+      } else {
+        healthDataList.push(newData);
+      }
+      renderHealthData();
+      closeModal('health-input-modal');
+    }
+    function editHealthData(idx) {
+      openHealthInputModal(idx);
+    }
+    function deleteHealthData(idx) {
+      if (confirm('确定要删除该条健康数据吗？')) {
+        healthDataList.splice(idx, 1);
+        renderHealthData();
+      }
+    }
+
+    let family = [
+      {name:'李阿姨', relation:'妻子', status:'健康良好', avatar:'https://cdn.jsdelivr.net/gh/duogongneng/mycdn@master/avatar/user1.png'},
+      {name:'王叔叔', relation:'兄弟', status:'需关注', avatar:'https://cdn.jsdelivr.net/gh/duogongneng/mycdn@master/avatar/user2.png'}
+    ];
+    let editingFamilyIdx = null;
+    function renderFamily() {
+      let list = document.getElementById('family-list');
+      list.innerHTML = family.map((f,i)=>
+        `<div style='text-align:center;'>
+          <img src='${f.avatar}' style='width:56px;height:56px;border-radius:50%;border:2px solid #ffb74d;'><br>
+          <span style='font-size:16px;'>${f.name}</span><br>
+          <span style='color:${f.status.includes('需关注')?'#f44336':'#4caf50'};font-size:15px;'>${f.status}</span><br>
+          <span style='font-size:15px;color:#888;'>${f.phone?f.phone:'未填写手机号'}</span><br>
+          <button style='margin-top:4px;font-size:15px;padding:4px 12px;background:#ff9800;color:#fff;border:none;border-radius:8px;' onclick='openFamilyModal(${i})'>查看</button>
+          <button style='margin-top:4px;font-size:15px;padding:4px 12px;background:#ffd54f;color:#ff9800;border:none;border-radius:8px;' onclick='openFamilyModal(${i})'>编辑</button>
+          <button style='margin-top:4px;font-size:15px;padding:4px 12px;background:#f44336;color:#fff;border:none;border-radius:8px;' onclick='deleteFamily(${i})'>删除</button>
+        </div>`
+      ).join('');
+    }
+    function openFamilyModal(idx) {
+      editingFamilyIdx = idx;
+      let f = family[idx];
+      document.getElementById('family-edit-name').value = f.name;
+      document.getElementById('family-edit-relation').value = f.relation;
+      document.getElementById('family-edit-phone').value = f.phone||'';
+      document.getElementById('family-edit-status').value = f.status;
+      document.getElementById('family-avatar-preview').src = f.avatar;
+      document.getElementById('family-avatar-upload').value = '';
+      document.getElementById('family-modal').style.display = 'flex';
+    }
+    function saveFamilyEdit(e) {
+      e.preventDefault();
+      if (editingFamilyIdx === null) return;
+      family[editingFamilyIdx].name = document.getElementById('family-edit-name').value;
+      family[editingFamilyIdx].relation = document.getElementById('family-edit-relation').value;
+      family[editingFamilyIdx].phone = document.getElementById('family-edit-phone').value;
+      family[editingFamilyIdx].status = document.getElementById('family-edit-status').value;
+      // 头像
+      const preview = document.getElementById('family-avatar-preview');
+      const base64 = preview.getAttribute('data-base64');
+      if (base64) family[editingFamilyIdx].avatar = base64;
+      renderFamily();
+      closeModal('family-modal');
+    }
+
+    function openAddFamilyModal() {
+      document.getElementById('add-family-form').reset();
+      document.getElementById('add-family-modal').style.display = 'flex';
+    }
+    function saveFamily(e) {
+      e.preventDefault();
+      family.push({
+        name: document.getElementById('family-name').value,
+        relation: document.getElementById('family-relation').value,
+        phone: document.getElementById('family-phone').value,
+        status: document.getElementById('family-status').value,
+        avatar: 'https://cdn.jsdelivr.net/gh/duogongneng/mycdn@master/avatar/user1.png'
+      });
+      renderFamily();
+      renderFamilyManage();
+      closeModal('add-family-modal');
+    }
+    function deleteFamily(idx) {
+      if (confirm('确定要删除该家人吗？')) {
+        family.splice(idx, 1);
+        renderFamily();
+        renderFamilyManage();
+      }
+    }
+
+    function openFamilyManageModal() {
+      renderFamilyManage();
+      document.getElementById('family-manage-modal').style.display = 'flex';
+    }
+    function renderFamilyManage() {
+      let ul = document.getElementById('family-manage-list');
+      ul.innerHTML = family.map((f,i)=>
+        `<li>${f.name}（${f.relation}，${f.phone?f.phone:'未填写手机号'}） <button onclick='editFamilyManage(${i})' style='font-size:15px;padding:2px 8px;margin-left:8px;'>编辑</button><button onclick='deleteFamilyManage(${i})' style='font-size:15px;padding:2px 8px;margin-left:4px;color:#f44336;'>删除</button></li>`
+      ).join('');
+    }
+    function editFamilyManage(i) {
+      openFamilyModal(i);
+      // 不再 splice，直接弹出编辑弹窗
+    }
+    function deleteFamilyManage(i) {
+      family.splice(i,1);
+      renderFamilyManage();
+      renderFamily();
+    }
+    function openSettingsModal() {
+      document.getElementById('settings-modal').style.display = 'flex';
+    }
+
+    function saveSettings() {
+      const theme = document.getElementById('setting-theme').value;
+      const fontsize = document.getElementById('setting-fontsize').value;
+      // 保存到 localStorage
+      localStorage.setItem('themeColor', theme);
+      localStorage.setItem('fontSize', fontsize);
+      applyTheme(theme, fontsize);
+      closeModal('settings-modal');
+    }
+    function applyTheme(theme, fontsize) {
+      document.documentElement.style.setProperty('--theme-color', theme);
+      // 按钮、导航、标题等主色
+      document.querySelectorAll('.big-btn').forEach(el=>{
+        el.style.background = theme;
+        el.style.color = '#fff';
+      });
+      document.querySelectorAll('.main-nav button.active').forEach(el=>{
+        el.style.background = theme;
+        el.style.color = '#fff';
+      });
+      document.querySelectorAll('.card-title').forEach(el=>{
+        el.style.color = theme;
+      });
+      document.body.style.fontSize = fontsize;
+    }
+    function applyThemeFromStorage() {
+      const theme = localStorage.getItem('themeColor') || '#ff9800';
+      const fontsize = localStorage.getItem('fontSize') || '18px';
+      applyTheme(theme, fontsize);
+      // 设置下拉框同步
+      if(document.getElementById('setting-theme')) document.getElementById('setting-theme').value = theme;
+      if(document.getElementById('setting-fontsize')) document.getElementById('setting-fontsize').value = fontsize;
+    }
+
+    function openMealModal() {
+      document.getElementById('meal-modal').style.display = 'flex';
+    }
+    function openHouseModal() {
+      document.getElementById('house-modal').style.display = 'flex';
+    }
+    function openMedicalModal() {
+      document.getElementById('medical-modal').style.display = 'flex';
+    }
+    function openActivityModal() {
+      document.getElementById('activity-modal').style.display = 'flex';
+    }
+
+    // 本地助餐持久化
+    let mealOrders = [];
+    function saveMealOrdersToStorage() {
+      localStorage.setItem('mealOrders', JSON.stringify(mealOrders));
+    }
+    function loadMealOrdersFromStorage() {
+      const data = localStorage.getItem('mealOrders');
+      if (data) mealOrders = JSON.parse(data);
+    }
+    function addMealOrder(e) {
+      e.preventDefault();
+      const name = document.getElementById('meal-name').value.trim();
+      const phone = document.getElementById('meal-phone').value.trim();
+      const address = document.getElementById('meal-address').value.trim();
+      const date = document.getElementById('meal-date').value;
+      const time = document.getElementById('meal-time').value;
+      if(name && phone && address && date && time) mealOrders.push({name,phone,address,date,time});
+      saveMealOrdersToStorage();
+      document.getElementById('meal-name').value = '';
+      document.getElementById('meal-phone').value = '';
+      document.getElementById('meal-address').value = '';
+      document.getElementById('meal-date').value = '';
+      document.getElementById('meal-time').value = '';
+      renderMeal();
+    }
+    function renderMeal() {
+      let ul = document.getElementById('meal-list');
+      ul.innerHTML = mealOrders.map((o,i)=>
+        `<li>${o.name} ${o.phone} ${o.address} ${o.date} ${o.time} <button onclick='deleteMealOrder(${i})' style='font-size:15px;padding:2px 8px;margin-left:8px;color:#f44336;'>删除</button></li>`
+      ).join('');
+    }
+    function deleteMealOrder(i) {
+      mealOrders.splice(i,1);
+      saveMealOrdersToStorage();
+      renderMeal();
+    }
+
+    // 家政服务
+    let houseOrders = [];
+    function saveHouseOrdersToStorage() {
+      localStorage.setItem('houseOrders', JSON.stringify(houseOrders));
+    }
+    function loadHouseOrdersFromStorage() {
+      const data = localStorage.getItem('houseOrders');
+      if (data) houseOrders = JSON.parse(data);
+    }
+    function addHouseOrder(e) {
+      e.preventDefault();
+      const name = document.getElementById('house-name').value.trim();
+      const phone = document.getElementById('house-phone').value.trim();
+      const type = document.getElementById('house-type').value.trim();
+      const date = document.getElementById('house-date').value;
+      const time = document.getElementById('house-time').value;
+      if(name && phone && type && date && time) houseOrders.push({name,phone,type,date,time});
+      saveHouseOrdersToStorage();
+      document.getElementById('house-name').value = '';
+      document.getElementById('house-phone').value = '';
+      document.getElementById('house-type').value = '';
+      document.getElementById('house-date').value = '';
+      document.getElementById('house-time').value = '';
+      renderHouse();
+    }
+    function renderHouse() {
+      let ul = document.getElementById('house-list');
+      ul.innerHTML = houseOrders.map((o,i)=>
+        `<li>${o.name} ${o.phone} ${o.type} ${o.date} ${o.time} <button onclick='deleteHouseOrder(${i})' style='font-size:15px;padding:2px 8px;margin-left:8px;color:#f44336;'>删除</button></li>`
+      ).join('');
+    }
+    function deleteHouseOrder(i) {
+      houseOrders.splice(i,1);
+      saveHouseOrdersToStorage();
+      renderHouse();
+    }
+    // 医疗挂号
+    let medicalOrders = [];
+    function saveMedicalOrdersToStorage() {
+      localStorage.setItem('medicalOrders', JSON.stringify(medicalOrders));
+    }
+    function loadMedicalOrdersFromStorage() {
+      const data = localStorage.getItem('medicalOrders');
+      if (data) medicalOrders = JSON.parse(data);
+    }
+    function addMedicalOrder(e) {
+      e.preventDefault();
+      const name = document.getElementById('medical-name').value.trim();
+      const hospital = document.getElementById('medical-hospital').value.trim();
+      const dept = document.getElementById('medical-dept').value.trim();
+      const date = document.getElementById('medical-date').value;
+      const time = document.getElementById('medical-time').value;
+      if(name && hospital && dept && date && time) medicalOrders.push({name,hospital,dept,date,time});
+      saveMedicalOrdersToStorage();
+      document.getElementById('medical-name').value = '';
+      document.getElementById('medical-hospital').value = '';
+      document.getElementById('medical-dept').value = '';
+      document.getElementById('medical-date').value = '';
+      document.getElementById('medical-time').value = '';
+      renderMedical();
+    }
+    function renderMedical() {
+      let ul = document.getElementById('medical-list');
+      ul.innerHTML = medicalOrders.map((o,i)=>
+        `<li>${o.name} ${o.hospital} ${o.dept} ${o.date} ${o.time} <button onclick='deleteMedicalOrder(${i})' style='font-size:15px;padding:2px 8px;margin-left:8px;color:#f44336;'>删除</button></li>`
+      ).join('');
+    }
+    function deleteMedicalOrder(i) {
+      medicalOrders.splice(i,1);
+      saveMedicalOrdersToStorage();
+      renderMedical();
+    }
+    // 社区活动
+    let activityOrders = [];
+    function saveActivityOrdersToStorage() {
+      localStorage.setItem('activityOrders', JSON.stringify(activityOrders));
+    }
+    function loadActivityOrdersFromStorage() {
+      const data = localStorage.getItem('activityOrders');
+      if (data) activityOrders = JSON.parse(data);
+    }
+    function addActivityOrder(e) {
+      e.preventDefault();
+      const title = document.getElementById('activity-title').value.trim();
+      const name = document.getElementById('activity-name').value.trim();
+      const date = document.getElementById('activity-date').value;
+      const time = document.getElementById('activity-time').value;
+      if(title && name && date && time) activityOrders.push({title,name,date,time});
+      saveActivityOrdersToStorage();
+      document.getElementById('activity-title').value = '';
+      document.getElementById('activity-name').value = '';
+      document.getElementById('activity-date').value = '';
+      document.getElementById('activity-time').value = '';
+      renderActivity();
+    }
+    function renderActivity() {
+      let ul = document.getElementById('activity-list');
+      ul.innerHTML = activityOrders.map((o,i)=>
+        `<li>${o.title} ${o.name} ${o.date} ${o.time} <button onclick='deleteActivityOrder(${i})' style='font-size:15px;padding:2px 8px;margin-left:8px;color:#f44336;'>删除</button></li>`
+      ).join('');
+    }
+    function deleteActivityOrder(i) {
+      activityOrders.splice(i,1);
+      saveActivityOrdersToStorage();
+      renderActivity();
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      loadHouseOrdersFromStorage();
+      renderHouse();
+      loadMedicalOrdersFromStorage();
+      renderMedical();
+      loadActivityOrdersFromStorage();
+      renderActivity();
+      // ...原有初始化...
+
+      // 兴趣圈子-广场舞圈上传视频
+      if(document.getElementById('dance-upload-btn')) {
+        document.getElementById('dance-upload-btn').onclick = function() {
+          document.getElementById('dance-upload').click();
+        };
+        document.getElementById('dance-upload').onchange = function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            document.getElementById('dance-list').innerHTML = `<video src='${evt.target.result}' controls style='max-width:100%;'></video>`;
+          };
+          reader.readAsDataURL(file);
+        };
+      }
+      // 兴趣圈子-书法交流上传图片
+      if(document.getElementById('calligraphy-upload-btn')) {
+        document.getElementById('calligraphy-upload-btn').onclick = function() {
+          document.getElementById('calligraphy-upload').click();
+        };
+        document.getElementById('calligraphy-upload').onchange = function(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            document.getElementById('calligraphy-list').innerHTML = `<img src='${evt.target.result}' style='max-width:100%;'>`;
+          };
+          reader.readAsDataURL(file);
+        };
+      }
+    });
+
+    function openDanceModal() {
+      document.getElementById('dance-modal').style.display = 'flex';
+    }
+    function openCalligraphyModal() {
+      document.getElementById('calligraphy-modal').style.display = 'flex';
+    }
+    function openChessModal() {
+      document.getElementById('chess-modal').style.display = 'flex';
+    }
+    function openDialectModal() {
+      document.getElementById('dialect-modal').style.display = 'flex';
+    }
+
+    function shareTo(type) {
+      // 系统级分享（Web Share API）
+      if (navigator.share) {
+        let shareData = {
+          title: '乐龄生活+广场舞圈',
+          text: '快来看看我的广场舞视频和留言吧！',
+          url: window.location.href
+        };
+        if(type==='微信') shareData.text = '快来微信看看我的广场舞视频和留言吧！';
+        if(type==='钉钉') shareData.text = '快来钉钉看看我的广场舞视频和留言吧！';
+        if(type==='QQ') shareData.text = '快来QQ看看我的广场舞视频和留言吧！';
+        navigator.share(shareData).catch(()=>{
+          alert('系统分享已取消或失败');
+        });
+      } else {
+        // 自动复制链接到剪贴板
+        let url = window.location.href;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(function() {
+            alert('链接已自动复制，您可以粘贴到' + type + '进行分享！');
+          }, function() {
+            alert('即将通过' + type + '分享\n如未弹出系统分享面板，请手动复制链接到' + type + '。');
+          });
+        } else {
+          // 兼容旧浏览器
+          let textarea = document.createElement('textarea');
+          textarea.value = url;
+          document.body.appendChild(textarea);
+          textarea.select();
+          try {
+            document.execCommand('copy');
+            alert('链接已自动复制，您可以粘贴到' + type + '进行分享！');
+          } catch (err) {
+            alert('即将通过' + type + '分享\n如未弹出系统分享面板，请手动复制链接到' + type + '。');
+          }
+          document.body.removeChild(textarea);
+        }
+      }
+    }
+    </script>
+</body>
+</html>
